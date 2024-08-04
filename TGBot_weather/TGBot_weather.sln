@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TGBot_weather", "TGBot_weather\TGBot_weather.pyproj", "{B6832500-E101-4666-AB4B-8583C0D0D792}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6832500-E101-4666-AB4B-8583C0D0D792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6832500-E101-4666-AB4B-8583C0D0D792}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6493712E-6F42-47A1-B847-6851108A10E7}
+	EndGlobalSection
+EndGlobal
