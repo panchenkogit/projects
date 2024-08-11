@@ -1,0 +1,75 @@
+﻿<Window x:Class="Archive.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Менеджер архивов IMG" Height="400" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель -->
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Чекбокс Выбрать все -->
+            <CheckBox Name="SelectAllCheckBox" Content="Выбрать все" Margin="0,0,10,0" 
+                      VerticalAlignment="Center"
+                      Checked="SelectAllCheckBox_Checked" Unchecked="SelectAllCheckBox_Unchecked"/>
+
+            <!-- Путь к файлу -->
+            <TextBox Name="FolderPathTextBox" Grid.Column="1" Margin="10,0" IsReadOnly="True" 
+                     VerticalAlignment="Center"/>
+
+            <!-- Кнопка Обзор -->
+            <Button Name="BrowseButton" Grid.Column="2" Content="Обзор" Margin="10,0,0,0" 
+                    Width="75" VerticalAlignment="Center" Click="BrowseButton_Click"/>
+        </Grid>
+
+        <!-- Таблица -->
+        <DataGrid Name="FilesDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10" 
+                  CanUserAddRows="False" IsReadOnly="False" SelectionMode="Extended" 
+                  SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Выбрать" Binding="{Binding IsSelected}" Width="50"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Тип файла" Binding="{Binding Type}" Width="*"/>
+                <DataGridTextColumn Header="Размер" Binding="{Binding Size}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Нижняя панель -->
+        <Grid Grid.Row="2" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Статистика файлов -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Всего файлов:" VerticalAlignment="Center"/>
+                <TextBlock Name="TotalFilesTextBlock" Margin="5,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Выбрано:" VerticalAlignment="Center"/>
+                <TextBlock Name="SelectedFilesTextBlock" Margin="5,0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Радио-кнопки выбора действия -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <RadioButton Name="ExtractRadioButton" Content="Извлечь" Margin="0,0,10,0"
+                             Checked="RadioButton_Checked" VerticalAlignment="Center" IsChecked="True"/>
+                <RadioButton Name="PackRadioButton" Content="Архивировать" 
+                             Checked="RadioButton_Checked" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Кнопка Выполнить -->
+            <Button Name="ExecuteButton" Grid.Column="2" Content="Выполнить" Margin="20,0,0,0" Width="100" 
+                    HorizontalAlignment="Right" VerticalAlignment="Center" Click="ExecuteButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>
