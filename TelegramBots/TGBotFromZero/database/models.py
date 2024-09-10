@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_
 
 from sqlalchemy import BigInteger
 
-engine = create_async_engine(url='sqlite+aiosqlite:///db1.sqlite3')
+engine = create_async_engine(url='sqlite+aiosqlite:///db2.sqlite3')
 
 async_session = async_sessionmaker(engine)
 
@@ -15,7 +15,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id = mapped_column(BigInteger)
-    name: Mapped[str] = mapped_column()
+    username: Mapped[str] = mapped_column()
 
 async def async_main():
     async with engine.begin() as conn:
