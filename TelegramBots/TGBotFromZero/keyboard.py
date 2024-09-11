@@ -18,15 +18,15 @@ set_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Назад", callback_data="go_back")]
 ])
 
-user_action = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="Удалить пользователя", callback_data="delete_user"),
-    InlineKeyboardButton(text="Добавить пользователя", callback_data="delete_user")],
+async def user_action_keyboard(tg_id):
+ return        InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Удалить пользователя", callback_data=f"delete_{tg_id}")],
     [InlineKeyboardButton(text="Назад", callback_data="go_back")]
 ])
 
 async def all_user(all_user):
     all_user_keyboard = InlineKeyboardBuilder()
     for user in all_user:
-        all_user_keyboard.add(InlineKeyboardButton(text=user.username, callback_data=f"user_{user.tg_id}"))
+        all_user_keyboard.add(InlineKeyboardButton(text=user.username, callback_data=f"user_{user.tg_id}_{user.username}"))
     all_user_keyboard.add(InlineKeyboardButton(text="Назад", callback_data="go_back"))
     return all_user_keyboard.adjust(1)
