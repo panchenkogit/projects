@@ -1,0 +1,2 @@
+TOKEN="7495674628:AAHldndvV79XE_iKheh_nERReHNdavzeRAE"
+BOT_NAME="scafvafgaf_bot"
