@@ -25,7 +25,7 @@ async def add_user(user: UserCreate,db: Session = Depends(create_db)) -> User:
     new_user = User(name=user.name, email=user.email, age=user.age)
     db.add(new_user)
     db.commit()
-    db.refresh(db)
+    db.refresh(new_user)
     
     return new_user
 
