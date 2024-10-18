@@ -1,15 +1,16 @@
 from pydantic import BaseModel
 
-
-    
-class User(BaseModel):
-    id: int
+class UserBase(BaseModel):
     name: str
     email: str
     age: int
     
+class UserCreate(UserBase):
+    pass
+    
+class User(UserBase):
+    id: int
+     
     class Config:
         from_attributes = True
         
-class UserCreate(User):
-    pass

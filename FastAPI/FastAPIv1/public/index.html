@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Form</title>
+    <style>
+        .user-container {
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+            width: 300px;
+            background-color: #f4f4f4;
+        }
+        .user-field {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add a new user</h1>
+    <form id="user-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <h2>Search for users by name</h2>
+    <form id="search-form">
+        <label for="search-name">Name:</label>
+        <input type="text" id="search-name" name="name" required><br><br>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>User results</h2>
+    <div id="user-results"></div>
+
+    <script>
+        // Добавление нового пользователя
+        document.getElementById('user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const age = document.getElementById('age').value;
+
+            const response = await fetch('http://127.0.0.1:8000/users/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, age }),
+            });
+
+            if (response.ok) {
+                alert('User added successfully!');
+                document.getElementById('user-form').reset();
+            } else {
+                alert('Failed to add user');
+            }
+        });
+
+        // Поиск пользователей по имени
+        document.getElementById('search-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('search-name').value;
+            
+            const response = await fetch(`http://127.0.0.1:8000/users/search?name=${encodeURIComponent(name)}`, {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                const users = await response.json();
+                const resultsContainer = document.getElementById('user-results');
+                resultsContainer.innerHTML = ''; // Очищаем предыдущие результаты
+                
+                users.forEach(user => {
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user-container');
+
+                    userDiv.innerHTML = `
+                        <div class="user-field"><strong>ID:</strong> ${user.id}</div>
+                        <div class="user-field"><strong>Name:</strong> ${user.name}</div>
+                        <div class="user-field"><strong>Email:</strong> ${user.email}</div>
+                        <div class="user-field"><strong>Age:</strong> ${user.age}</div>
+                    `;
+
+                    resultsContainer.appendChild(userDiv);
+                });
+            } else {
+                alert('No users found');
+            }
+        });
+    </script>
+</body>
+</html>
