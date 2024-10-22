@@ -1,14 +1,21 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from pydantic import BaseModel, Field, NonNegativeFloat
+from typing import Optional
 
-from database import Base
 
-class Product(Base):
-    __tablename__ = "products"
+class ProductBase(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100, description="Название продукта(обязательно)") 
+    description: Optional[str] = Field(None, max_length=100, description="Описание продукта(не обязательно)")
+    proteins: NonNegativeFloat = Field(0.0, ge=0, description="Кол-во белков(больше или равно 0)")
+    fats: NonNegativeFloat = Field(0.0, ge=0, description="Кол-во жиров(больше или равно 0)")
+    carbohydrates: NonNegativeFloat = Field(0.0, ge=0, description="Кол-во углеводов(больше или равно 0)")
+    calories: NonNegativeFloat = Field(0.0, ge=0, le=10000, description="Кол-во калорий(больше или равно 0)")
+
+class ProductCreate(ProductBase):
+    pass
+   
+class Product(ProductBase):
+    id: int
     
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    proteins = Column(Float)
-    fats = Column(Float)
-    carbohydrates = Column(Float)
-    calories = Column(Float)
+    class Config:
+        from_attributes = True       
+       

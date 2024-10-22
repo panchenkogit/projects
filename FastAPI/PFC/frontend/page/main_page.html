@@ -1,37 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Дневник питания</title>
-  <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить продукт</title>
 </head>
 <body>
-  <h1>Запиши свой рацион</h1>
-  <form id="mealForm">
-    <label>Название продукта:</label>
-    <input type="text" id="product" required>
-    <label>Калории (ккал):</label>
-    <input type="number" id="calories" required>
-    <button type="submit">Добавить</button>
-  </form>
-  <ul id="mealList"></ul>
-
-  <script>
-    const mealForm = document.getElementById('mealForm');
-    const mealList = document.getElementById('mealList');
+    <h1>Добавить продукт</h1>
     
-    mealForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const product = document.getElementById('product').value;
-      const calories = document.getElementById('calories').value;
-      
-      const mealItem = document.createElement('li');
-      mealItem.textContent = `${product}: ${calories} ккал`;
-      mealList.appendChild(mealItem);
+    <form id="productForm">
+        <!-- Название продукта -->
+        <label for="name">Название продукта (обязательно):</label><br>
+        <input type="text" id="name" name="name" minlength="2" maxlength="100" required>
+        <br><br>
 
-      mealForm.reset();
-    });
+        <!-- Описание продукта -->
+        <label for="description">Описание продукта (не обязательно):</label><br>
+        <input type="text" id="description" name="description" maxlength="100">
+        <br><br>
+
+        <!-- Белки -->
+        <label for="proteins">Белки (больше или равно 0):</label><br>
+        <input type="number" id="proteins" name="proteins" min="0" step="0.01" value="0.0" required>
+        <br><br>
+
+        <!-- Жиры -->
+        <label for="fats">Жиры (больше или равно 0):</label><br>
+        <input type="number" id="fats" name="fats" min="0" step="0.01" value="0.0" required>
+        <br><br>
+
+        <!-- Углеводы -->
+        <label for="carbohydrates">Углеводы (больше или равно 0):</label><br>
+        <input type="number" id="carbohydrates" name="carbohydrates" min="0" step="0.01" value="0.0" required>
+        <br><br>
+
+        <!-- Калории -->
+        <label for="calories">Калории (больше или равно 0, не больше 10000):</label><br>
+        <input type="number" id="calories" name="calories" min="0" max="10000" step="0.01" value="0.0" required>
+        <br><br>
+
+        <!-- Кнопка добавления продукта -->
+        <button type="submit">Добавить продукт</button>
+
+    </form>
+
+    <script>
+      async function addProduct(event) {
+          event.preventDefault();  // Отключаем стандартное поведение формы
+  
+          console.log("Функция addProduct вызвана");
+  
+          // Получение значений полей формы
+          const name = document.getElementById("name").value;
+          const description = document.getElementById("description").value;
+          const proteins = parseFloat(document.getElementById("proteins").value);
+          const fats = parseFloat(document.getElementById("fats").value);
+          const carbohydrates = parseFloat(document.getElementById("carbohydrates").value);
+          const calories = parseFloat(document.getElementById("calories").value);
+  
+          // Создание объекта с данными продукта
+          const product = {
+              name: name,
+              description: description,
+              proteins: proteins,
+              fats: fats,
+              carbohydrates: carbohydrates,
+              calories: calories
+          };
+  
+          try {
+              // Асинхронный запрос на сервер
+              const response = await fetch('/product/add', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(product)  // Преобразование объекта в JSON-строку
+              });
+  
+              // Обработка ответа
+              if (response.ok) {
+                  const result = await response.json();
+                  console.log('Продукт успешно добавлен:', result);
+              } else {
+                  console.error('Ошибка при добавлении продукта:', response.statusText);
+              }
+          } catch (error) {
+              console.error('Ошибка сети:', error);
+          }
+      }
+  
+      document.getElementById('productForm').addEventListener('submit', addProduct);
   </script>
+  
 </body>
 </html>
