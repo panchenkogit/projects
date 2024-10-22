@@ -1,0 +1,116 @@
+/* Сброс стандартных стилей браузера */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Основной стиль для body */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  /* Заголовки */
+  h1, h2, h3 {
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    color: #333;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-size: 1.75rem;
+  }
+  
+  /* Контейнер для всего контента */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Стили для формы */
+  form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="number"] {
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Список продуктов */
+  ul {
+    list-style: none;
+  }
+  
+  li {
+    background-color: #f1f1f1;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Адаптивность для мобильных устройств */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+  
+    .container {
+      padding: 15px;
+    }
+  
+    input[type="text"],
+    input[type="number"] {
+      font-size: 0.9rem;
+    }
+  
+    button {
+      font-size: 0.9rem;
+    }
+  }
+  
