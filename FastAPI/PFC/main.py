@@ -1,6 +1,8 @@
 from typing import List, Optional
+from fastapi import Query
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.future import select
 
@@ -15,13 +17,27 @@ from app.database.models import Product as Product_DB
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешаем запросы с любых доменов
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешаем любые HTTP-методы
+    allow_headers=["*"],  # Разрешаем любые заголовки
+)
+
 @app.on_event("startup")
 async def on_startup():
     # Создаем таблицы
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+
+
+app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 @app.get('/', response_class=HTMLResponse)
 async def main_page():
@@ -59,5 +75,6 @@ async def add_product(product: ProductCreate ,db: AsyncSession = Depends(get_db)
     await db.refresh(new_product)
     
     return new_product
+
     
 
