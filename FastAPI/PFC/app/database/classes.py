@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, NonNegativeFloat
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field, NonNegativeFloat
+
 from typing import Optional
 
 
@@ -17,5 +19,30 @@ class Product(ProductBase):
     id: int
     
     class Config:
-        from_attributes = True       
+        from_attributes = True    
+        
+       
+        
+class UserLogin(BaseModel):
+    username: str = Field(..., max_length=20, min_length = 2, description="Имя пользователя (от 3 до 50 символов)")
+    password: str = Field(..., min_length=6, max_length=100, description="Пароль (минимум 8 символов)")
+    
+class UserCreate(UserLogin):
+    email: EmailStr = Field(..., description="Email пользователя (обязательно и в формате email)")
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="Дата создания пользователя (автоматически заполняется)")
+
+class User(BaseModel):
+    id: int = Field(..., description="Уникальный идентификатор пользователя, назначаемый базой данных")
+    username: str = Field(...,min_length=3, max_length=50, description="Имя пользователя (от 3 до 50 символов)")
+    email: EmailStr = Field(..., description="Email пользователя")
+    created_at: datetime = Field(..., description="Дата создания пользователя")
+
+    class Config:
+        from_attributes = True
+        json_encoders = {
+            datetime: lambda v: v.strftime("%d.%m.%Y %H:%M")
+        }
+
+    
+    
        

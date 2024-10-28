@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy.sql import func
+from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, Float
 
 from app.database.database import Base
 
@@ -12,3 +13,13 @@ class Product(Base):
     fats = Column(Float)
     carbohydrates = Column(Float)
     calories = Column(Float)
+    
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, index=True, unique=True)
+    hashed_password = Column(String,nullable=False)
+    email = Column(String, index=True, unique=True)
+    created_at = Column(DateTime, default=func.now())

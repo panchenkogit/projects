@@ -1,21 +1,22 @@
-from typing import List, Optional
-from fastapi import Query
+from multiprocessing import get_context
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlalchemy.future import select
-
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import select
+from passlib.context import CryptContext
 
+from app.database.classes import UserCreate, User, UserLogin
+from app.database.database import AsyncSession, get_db
+from app.database.models import User as UserDB
 
-from app.database.database import engine, Base, get_db, AsyncSession
-from app.database.classes import Product, ProductCreate
-from app.database.models import Product as Product_DB
-
+from app.database.operations.products.router import router as product_router
+from app.database.database import engine, Base
 
 
 app = FastAPI()
+app.include_router(product_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,14 +28,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup():
-    # Создаем таблицы
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-
-app = FastAPI()
 
 
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
@@ -45,36 +40,52 @@ async def main_page():
         with open("frontend/page/main_page.html", 'r', encoding='utf-8') as file:
             content = file.read()
         return content
+    
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Page not found")
-
-@app.get("/products/{id}", response_model=Product)
-async def get__spec_product(id: int, db: AsyncSession = Depends(get_db)) -> Product:
-    product = await db.execute(select(Product_DB).where(Product_DB.id == id))
-    result = product.scalar()
-    if not result:
-        raise HTTPException(status_code=404, detail=f"Product with ID {id} not found")
-    return result
-
-
-@app.get("/products", response_model=List[Product])
-async def get_products(db : AsyncSession = Depends(get_db)) -> List[Product]:
-    products = await db.execute(select(Product_DB))
-    result = products.scalars().all()
-    if not result:
-        raise HTTPException(status_code=404, detail="No products found")
-    return result
-        
-        
-
-@app.post("/product/add",response_model=Product)
-async def add_product(product: ProductCreate ,db: AsyncSession = Depends(get_db)) -> Product:
-    new_product = Product_DB(name=product.name, description=product.description, proteins=product.proteins, fats=product.fats, carbohydrates=product.carbohydrates, calories=product.calories)
-    db.add(new_product)
-    await db.commit()
-    await db.refresh(new_product)
+ 
+#хэширование пароля   
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     
-    return new_product
-
+@app.post("/auth/register")
+async def reg_user(user: UserCreate, db: AsyncSession = Depends(get_db))-> User: 
+    check_user = await db.execute(select(UserDB).where(UserDB.username==user.username))
+    check_email = await db.execute(select(UserDB).where(UserDB.email == user.email))
     
+    if check_user.scalar() is not None:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    elif check_email.scalar() is not None:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    else:
+        hashed_password = pwd_context.hash(user.password)
+        
+        new_user = UserDB(
+            username=user.username,
+            hashed_password=hashed_password,
+            email=user.email
+        )
+        
+        db.add(new_user)
+        await db.commit()
+        await db.refresh(new_user)
+        
+    return new_user
+
+@app.post('/auth/login')
+async def auth_user(user: UserLogin, db: AsyncSession = Depends(get_db)) -> dict:
+    result = await db.execute(select(UserDB).where(UserDB.username == user.username))
+    user_db = result.scalar_one_or_none()
+
+    if user_db is None:
+        raise HTTPException(status_code=404, detail="User not found or not registered")
+
+    if not pwd_context.verify(user.password, user_db.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    return {
+        "status": 200,
+        "data": "Everything is fine, you are found!"
+    }
 
